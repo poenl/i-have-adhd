@@ -31,7 +31,11 @@ jobs:
         run: |
           git remote add upstream https://github.com/ayghri/i-have-adhd.git
           git fetch upstream main
-          git merge --no-edit upstream/main
+          # 合并会创建合并提交，而 runner 上没有 git 提交者身份，
+          # 直接 merge 会 fatal: empty ident name 并以 128 退出，故用 -c 临时指定身份
+          git -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              merge --no-edit upstream/main
 
       - name: Push to origin main
         run: git push origin main
